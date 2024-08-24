@@ -25,10 +25,10 @@ function Authorization(req, res, next) {
       next();
     });
   } catch (e) {
-    res.status(500).json({ message: "Server fetch error" });
+    res.status(500).json({ message: "Server error during token verification" });
   }
 }
 
 module.exports = {
-  authorization:Authorization,
+  authorization: Authorization,
 };

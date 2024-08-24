@@ -5,13 +5,13 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const { User } = require("./database/database"); // Use CommonJS for imports
 const {authorization}=require("./middleware/auth")
+const {admin}=require("./middleware/admin");
 const { VaildUser } = require("./type"); // Use CommonJS for imports
 
 const SECRET_KEY = "mahesh"; // Replace with a more secure key for production
 
 mongoose.connect(
   "mongodb+srv://savantmahesh16:iFw0Xy4wG4yLPXqO@cluster0.4nk5i.mongodb.net/coures",
-  { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
 const app = express();
@@ -83,10 +83,10 @@ app.post("/signin", async (req, res) => {
 });
 
 //add couresn  
-app.post('/addCoures',authorization,(req,res)=>{
-  
-  res.json({ message: "ok"})
-})
+app.post('/addCourse', authorization, admin, (req, res) => {
+  res.json({ message: "ok", data: req.user });
+});
+
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");
