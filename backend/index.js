@@ -3,10 +3,10 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken"); // Correct JWT import
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
-const { User } = require("./database/database"); // Use CommonJS for imports
+const { User, Course } = require("./database/database"); // Use CommonJS for imports
 const {authorization}=require("./middleware/auth")
 const {admin}=require("./middleware/admin");
-const { VaildUser } = require("./type"); // Use CommonJS for imports
+const { VaildUser, VaildCourse } = require("./type"); // Use CommonJS for imports
 
 const SECRET_KEY = "mahesh"; // Replace with a more secure key for production
 
@@ -20,7 +20,17 @@ app.use(express.json());
 
 // Signup page
 app.post("/signup", async (req, res) => {
-  const { username, password } = req.body;
+  // Validate user input using Zod schema
+  const { success, data, error } = VaildUser.safeParse(req.body);
+
+  // If validation fails, return a 400 error with detailed errors
+  if (!success) {
+    return res.status(400).json({ message: "Invalid input", errors: error.errors });
+  }
+
+  // Destructure validated username and password from the data
+  const { username, password } = data;
+
   try {
     // Check if the user already exists
     const user = await User.findOne({ username });
@@ -45,6 +55,7 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 
 
@@ -83,9 +94,50 @@ app.post("/signin", async (req, res) => {
 });
 
 //add couresn  
-app.post('/addCourse', authorization, admin, (req, res) => {
-  res.json({ message: "ok", data: req.user });
+
+
+app.post('/addCourse', authorization, admin, async (req, res) => {
+  // Validate the course input using the Zod schema
+  const { success, data, error } = VaildCourse.safeParse(req.body);
+  if (!success) {
+    return res.status(400).json({ message: "Invalid input", errors: error.errors });
+  }
+
+  // Destructure validated course data from the parsed data
+  const { id, title, description, price, imageLink, published } = data;
+
+  try {
+    // Find the user (admin) by username from the decoded token
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).json({ message: "Admin is not present" });
+    } else {
+      // Create a new course and save it to the database
+      const newCourse = new Course({
+        id: id,
+        title: title,
+        description: description,
+        price: price,
+        imageLink: imageLink,
+        published: published
+      });
+
+      await newCourse.save();
+
+      // Add the new course to the user's purchasedCourses array
+      user.purchasedCourses.push(newCourse._id);
+      await user.save();
+
+      // Respond with success message
+      console.log("Course added to user's purchased courses.");
+      res.json({ message: "Course added successfully", courseId: newCourse._id });
+    }
+  } catch (error) {
+    // Handle any errors that occur
+    return res.status(500).json({ message: "Server problem", error: error.message });
+  }
 });
+
 
 
 app.listen(3000, () => {

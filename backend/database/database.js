@@ -13,7 +13,7 @@ const courseSchema = new mongoose.Schema({
     description: String,
     price: Number,
     imageLink: String,
-    published: Boolean
+    published: {type:Boolean,default:true,Optional:true},
 });
 
 const User=mongoose.model('User',userSchema);
