@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken"); // Correct JWT import
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const { User } = require("./database/database"); // Use CommonJS for imports
+const {authorization}=require("./middleware/auth")
 const { VaildUser } = require("./type"); // Use CommonJS for imports
 
 const SECRET_KEY = "mahesh"; // Replace with a more secure key for production
@@ -80,6 +81,12 @@ app.post("/signin", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+//add couresn  
+app.post('/addCoures',authorization,(req,res)=>{
+  
+  res.json({ message: "ok"})
+})
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");
