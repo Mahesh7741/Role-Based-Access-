@@ -1,3 +1,4 @@
+import AddCoures from "./AddCourse";
 function HomePage() {
     return (
         <div style={{
@@ -9,7 +10,8 @@ function HomePage() {
             margin: 0, 
             backgroundColor: "#f4f4f4" 
         }}>
-            <h1>Welcome to Home Page</h1>
+            <div><AddCoures></AddCoures></div>
+            {/* <h1>Welcome to Home Page</h1> */}
         </div>
     );
 }

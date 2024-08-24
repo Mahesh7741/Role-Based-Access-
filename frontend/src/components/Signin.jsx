@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"; // Import React-Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import React-Toastify CSS
@@ -9,6 +9,14 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if token exists and navigate to homepage if logged in
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/homepage");
+    }
+  }, [navigate]);
 
   async function userCheck(e) {
     e.preventDefault();
@@ -30,7 +38,6 @@ function Signin() {
         toast.success("Signin successful! Redirecting to homepage...");
         setTimeout(() => {
           navigate("/homepage");
-          window.location.reload();
         }, 1000); // Delay navigation for toast to show
       } else {
         toast.error(result.message || "Signin failed!");
@@ -99,9 +106,7 @@ function Signin() {
                 borderRadius: "4px",
                 boxSizing: "border-box",
               }}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div
@@ -131,9 +136,7 @@ function Signin() {
                 borderRadius: "4px",
                 boxSizing: "border-box",
               }}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button
