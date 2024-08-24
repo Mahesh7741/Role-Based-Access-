@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 function AppBar() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [username, setUsername] = useState("");
+
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const user = payload.username.split("@")[0]; // Extract username before '@'
@@ -59,7 +63,7 @@ function AppBar() {
           <>
             <span
               style={{
-                fontSize: "16px",
+                fontSize: "18px", // Slightly larger username
                 fontWeight: "500",
               }}
             >
@@ -71,17 +75,20 @@ function AppBar() {
                 color: "#007BFF",
                 border: "none",
                 borderRadius: "5px",
-                padding: "10px 20px",
+                padding: "10px",
                 fontSize: "16px",
                 cursor: "pointer",
                 transition: "background-color 0.3s, color 0.3s",
                 height: "40px",
                 lineHeight: "20px",
                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               onClick={handleLogout}
             >
-              Logout
+              <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
             </button>
           </>
         ) : (

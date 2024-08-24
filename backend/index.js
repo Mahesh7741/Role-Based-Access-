@@ -71,7 +71,7 @@ app.post("/signin", async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ username, role: "user" }, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ username, role: user.role }, SECRET_KEY, { expiresIn: "1h" });
 
     // Respond with the token
     res.status(200).json({ message: "Signin successful", token });
